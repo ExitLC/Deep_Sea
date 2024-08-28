@@ -41,7 +41,7 @@ $('#txtEmail').on('input', validate);
 
 //*Age*//
 const setAge = () => {
-    localStorage.setItem('age', document.querySelector('input[name="value-radio"]:checked').value);
+    localStorage.setItem('age', document.querySelector('input[name="value-radio"]:checked').value); //เปลี่ยนค่า value เป็น id
     location.replace("3_Gender.html");
     
 }
@@ -421,7 +421,7 @@ const ModelPageNext = () => {
     degree_id: degree_id,
     field_study_name: field_study_name,
     province_id: province_id,
-    result_id: 1  
+    //result_id: 1  
   }
   
   $.ajax({
