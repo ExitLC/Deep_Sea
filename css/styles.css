@@ -971,7 +971,7 @@ section {
   height: 500px;
   width: 400px;
   position: fixed;
-  top: 47%;
+  top: 43%;
   left: 50%;
   margin-top: -100px;
   margin-left: -200px;
@@ -1791,13 +1791,13 @@ canvas {
     color: #aaa;
 }
 
-.content {
+.contentcom {
     text-align: center;
     padding: 0px;
     padding-bottom: 0px;
 }
 
-.content h1 {
+.contentcom h1 {
     font-size: 35px;
     margin-bottom: 0px;
     position: absolute;

@@ -54,7 +54,7 @@
 <script>
     $(document).ready(function() {
     $.ajax({
-        url: 'http://localhost:5000/qa_answers',  // Your server-side script URL
+        url: apiUrl + 'qa_answers',  // Your server-side script URL
         type: 'GET',
         dataType: 'json',
         success: function(data) {

@@ -58,7 +58,7 @@
 <script>
     $(document).ready(function() {
    $.ajax({
-       url: 'http://localhost:5000/qa_answers',  // Your server-side script URL
+       url: apiUrl + '/qa_answers',  // Your server-side script URL
        type: 'GET',
        dataType: 'json',
        success: function(data) {
@@ -133,15 +133,16 @@
         });
 
         var formatJson = {
-            user_id: 8, // Replace with actual user ID if needed
+            user_id: localStorage.getItem("user_id"), // Replace with actual user ID if needed
             ans_list: anslist
         };
 
-        console.log('Formatted JSON:', JSON.stringify(formatJson));
+        console.log("user_id:", localStorage.getItem("user_id"));
+        console.log(JSON.stringify(formatJson));
 
         // Send data to server
         $.ajax({
-            url: 'http://localhost:5000/qa_transaction', // Your server-side script URL
+            url: apiUrl + 'qa_transaction', // Your server-side script URL
             method: 'POST',
             dataType: 'json',
             contentType: 'application/json',

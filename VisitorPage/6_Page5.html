@@ -54,108 +54,107 @@
        </section>
        <script>
         $(document).ready(function() {
-       $.ajax({
-           url: 'http://localhost:5000/qa_answers',  // Your server-side script URL
-           type: 'GET',
-           dataType: 'json',
-           success: function(data) {
-               var container = $('#checkbox-containerV5');
-               container.empty(); // Clear existing checkboxes
-    
-               // Filter data to include only records with IDs 1 through 8
-               var filteredData = data.filter(function(item) {
-                   return item.ans_id >= 21 && item.ans_id <= 28;
+   $.ajax({
+       url: apiUrl + '/qa_answers',  // Your server-side script URL
+       type: 'GET',
+       dataType: 'json',
+       success: function(data) {
+           var container = $('#checkbox-containerV5');
+           container.empty(); // Clear existing checkboxes
+
+           // Filter data to include only records with IDs 1 through 8
+           var filteredData = data.filter(function(item) {
+               return item.ans_id >= 21 && item.ans_id <= 28;
+           });
+
+           // Create checkboxes based on filtered data
+           $.each(filteredData, function(index, item) {
+               // Assign a unique class based on ans_id
+               var uniqueClass = 'option-' + item.ans_id; // Example: option-1, option-2, etc.
+               var checkbox = $('<input>', {
+                   type: 'checkbox',
+                   id: 'checkbox' + item.ans_id,
+                   value: item.ans_id + '-' + item.qa_id,
+                   class: uniqueClass
                });
-    
-               // Create checkboxes based on filtered data
-               $.each(filteredData, function(index, item) {
-                   // Assign a unique class based on ans_id
-                   var uniqueClass = 'option-' + item.ans_id; // Example: option-1, option-2, etc.
-                   var checkbox = $('<input>', {
-                       type: 'checkbox',
-                       id: 'checkbox' + item.ans_id,
-                       value: item.ans_id + '-' + item.qa_id,
-                       class: uniqueClass
-                   });
-    
-                   var span = $('<span>', {
-                       text: item.answer,
-                       class: uniqueClass
-                   });
-    
-                   var label = $('<label>', {
-                       for: 'checkbox' + item.ans_id
-                   }).append(checkbox).append(span); // Wrap checkbox and span inside label
-                   
-                       container.append(checkbox).append(label).append('<br>');
-                   });
-                   
-                   $('input[type="checkbox"]').change(function() {
-                   var selectedCount = $('input[type="checkbox"]:checked').length;
-                   if (selectedCount > 3) {
-                       $(this).prop('checked', false); // Uncheck the last clicked checkbox
-                       alert('You can select up to 3 options only.');
-                   }
+
+               var span = $('<span>', {
+                   text: item.answer,
+                   class: uniqueClass
                });
-           },
-               error: function(xhr, status, error) {
-                   console.error('Error fetching data:', status, error);
+
+               var label = $('<label>', {
+                   for: 'checkbox' + item.ans_id
+               }).append(checkbox).append(span); // Wrap checkbox and span inside label
+               
+                   container.append(checkbox).append(label).append('<br>');
+               });
+               
+               $('input[type="checkbox"]').change(function() {
+               var selectedCount = $('input[type="checkbox"]:checked').length;
+               if (selectedCount > 3) {
+                   $(this).prop('checked', false); // Uncheck the last clicked checkbox
+                   alert('You can select up to 3 options only.');
                }
            });
-        $('#submitButton').click(function() {
-            // Retrieve and combine stored data from localStorage
-            var pages = ['selectedOptions_page1', 'selectedOptions_page2', 'selectedOptions_page3', 'selectedOptions_page4', 'selectedOptions_page5'];
-            var combinedAnswers = {};
-    
-            pages.forEach(function(page) {
-                var answers = JSON.parse(localStorage.getItem(page)) || [];
-                answers.forEach(function(answer) {
-                    var [ans_id, qa_id] = answer.split('-'); // Split '1-1' into qa_id and ans_id
-                    qa_id = parseInt(qa_id, 10);
-                    ans_id = parseInt(ans_id, 10);
-    
-                    if (!combinedAnswers[qa_id]) {
-                        combinedAnswers[qa_id] = [];
-                    }
-                    combinedAnswers[qa_id].push(ans_id);
-                });
-            });
-    
-            // Format data into the required structure
-            var anslist = Object.keys(combinedAnswers).map(function(qa_id) {
-                return {
-                    qa_id: parseInt(qa_id, 10),
-                    ans_id: combinedAnswers[qa_id]
-                };
-            });
-    
-            var formatJson = {
-                user_id: 7, // Replace with actual user ID if needed
-                ans_list: anslist
-            };
-    
-            console.log('Formatted JSON:', JSON.stringify(formatJson));
-    
-            // Send data to server
-            $.ajax({
-                url: 'http://localhost:5000/qa_transaction', // Your server-side script URL
-                method: 'POST',
-                dataType: 'json',
-                contentType: 'application/json',
-                data: JSON.stringify(formatJson),
-                success: function(response) {
-                    console.log('Success:', response);
-                    alert('Data submitted successfully.');
-                },
-                error: function(xhr, status, error) {
-                    console.error('Error:', status, error);
-                    alert('Error submitting data.');
+       },
+           error: function(xhr, status, error) {
+               console.error('Error fetching data:', status, error);
+           }
+       });
+    $('#submitButton').click(function() {
+        // Retrieve and combine stored data from localStorage
+        var pages = ['selectedOptions_page1', 'selectedOptions_page2', 'selectedOptions_page3', 'selectedOptions_page4', 'selectedOptions_page5'];
+        var combinedAnswers = {};
+
+        pages.forEach(function(page) {
+            var answers = JSON.parse(localStorage.getItem(page)) || [];
+            answers.forEach(function(answer) {
+                var [ans_id, qa_id] = answer.split('-'); // Split '1-1' into qa_id and ans_id
+                qa_id = parseInt(qa_id, 10);
+                ans_id = parseInt(ans_id, 10);
+
+                if (!combinedAnswers[qa_id]) {
+                    combinedAnswers[qa_id] = [];
                 }
+                combinedAnswers[qa_id].push(ans_id);
             });
-            location.replace("../ModelPage/1_ModelPageStart.html")
         });
+
+        // Format data into the required structure
+        var anslist = Object.keys(combinedAnswers).map(function(qa_id) {
+            return {
+                qa_id: parseInt(qa_id, 10),
+                ans_id: combinedAnswers[qa_id]
+            };
+        });
+
+        var formatJson = {
+            user_id: localStorage.getItem("user_id"), // Replace with actual user ID if needed
+            ans_list: anslist
+        };
+
+        console.log("user_id:", localStorage.getItem("user_id"));
+        console.log(JSON.stringify(formatJson));
+
+        // Send data to server
+        $.ajax({
+            url: apiUrl + 'qa_transaction', // Your server-side script URL
+            method: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify(formatJson),
+            success: function(response) {
+                console.log('Success:', response);
+                alert('Data submitted successfully.');
+            },
+            error: function(xhr, status, error) {
+                console.error('Error:', status, error);
+                alert('Error submitting data.');
+            }
+        });
+        location.replace("../ModelPage/1_ModelPageStart.html")
     });
-    
-    </script>
-</body>
+});
+</script>
 </html>

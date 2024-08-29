@@ -8,6 +8,7 @@
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript" src="../js/script.js"></script>
 </head>
 <body class="ModelBody">
     <div class="container">
@@ -20,7 +21,7 @@
             <h1>Electrical</h1>
             <div class="wrapper">
             <model-viewer class="model-viewer"
-            src="../Model/elecdone.glb" 
+            src="../Model/Elecdone.glb" 
             ar ar-modes="webxr scene-viewer quick-look" 
              tone-mapping="neutral" 
             poster=""
@@ -52,8 +53,9 @@
         google.charts.setOnLoadCallback(fetchDataAndDrawChart);
 
         function fetchDataAndDrawChart() {
+            var user_id = localStorage.getItem("user_id")
             $.ajax({
-                url: 'http://localhost:5000/results/7',  // Replace with your actual API URL
+                url: apiUrl + 'results/' + user_id,  // Replace with your actual API URL
                 type: 'GET',
                 dataType: 'json',
                 success: function(response) {
@@ -106,7 +108,7 @@
         }
 
         document.getElementById('shareBtn').addEventListener('click', () => {
-                const imageUrl = document.getElementById('imageToSave').src;// ไว้สำหรับใส่รูปที่จะเซฟ
+                const imageUrl = '../Img/Electronics.png'// ไว้สำหรับใส่รูปที่จะเซฟ
                 const fileName = "shared_image.png";
 
                 fetch(imageUrl)
@@ -117,6 +119,7 @@
                             navigator.share({ files })
                                 .then(() => console.log('Image shared successfully'))
                                 .catch((error) => console.error('Error sharing image:', error));
+                                localStorage.clear();
                         } else {
                             alert('Your browser does not support file sharing.');
                         }

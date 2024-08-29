@@ -1,3 +1,5 @@
+var apiUrl = 'https://deepseaoph2024.bu.ac.th/api/'
+
 
 //*Email Right here//
 let isValidate = true;
@@ -41,7 +43,7 @@ $('#txtEmail').on('input', validate);
 
 //*Age*//
 const setAge = () => {
-    localStorage.setItem('age', document.querySelector('input[name="value-radio"]:checked').value); //เปลี่ยนค่า value เป็น id
+    localStorage.setItem('age', document.querySelector('input[name="value-radio"]:checked').value);
     location.replace("3_Gender.html");
     
 }
@@ -139,8 +141,7 @@ location.replace("../infoPage/5_Degree.html");
 
 //-------------------------------InfoPage--------------------------//
 
-const DeepSeaNext = async () => {
-location.replace("../VisitorPage/2_Page1.html")
+
 
   // try {
   //   const response = await fetch('http://localhost:5000/register_user', {
@@ -162,7 +163,7 @@ location.replace("../VisitorPage/2_Page1.html")
   // } catch (error) {
   //   console.error('There was a problem with the fetch operation:', error);
   // }
-};
+
 
 
 document.addEventListener('DOMContentLoaded', (event) => {
@@ -394,26 +395,24 @@ function saveSelectionPage2() {
 
 /*Student Page*/
 
-const DeepSeaNextStudent = async () => {
-location.replace("../StudentPage/2_SPage1.html")
-};
-/*ReviewPage*/
 
 
-
-const ModelPageNext = () => {
+const DeepSeaNextStudent = () => {
+  var register_id = $('#registerUser').val();
   var email_name = localStorage.getItem('email')
   var age_id = localStorage.getItem('age');
   var gender_id = localStorage.getItem('gender');
   var status_id = localStorage.getItem('status');
   var degree_id = localStorage.getItem('degree');
   var field_study_name1 = localStorage.getItem('fos');
-  var field_study_name2 = localStorage.getItem('fosvoc')
+  var field_study_name2 = localStorage.getItem('fosvoc');
+  var field_study_name3 = localStorage.getItem('faculty');
   var province_id = localStorage.getItem('province');
 
-  var field_study_name = field_study_name1 || field_study_name2;
+  var field_study_name = field_study_name1 || field_study_name2 || field_study_name3
 
   let data = {
+    register_id:register_id,
     email_name: email_name,
     age_id: age_id,
     gender_id: gender_id,
@@ -421,20 +420,65 @@ const ModelPageNext = () => {
     degree_id: degree_id,
     field_study_name: field_study_name,
     province_id: province_id,
-    //result_id: 1  
   }
   
   $.ajax({
-    url: 'http://localhost:5000/register_user',
+    url: apiUrl + 'register_user',
     method: 'POST',
     dataType: 'json', //datatype ที่ส่งมาเป็นรูปแบบ json
     data: data
 }).always(function (response) {
-    console.log(response);
-    alert('success');
+  console.log(response);
+  localStorage.setItem('user_id',response.user_id);
+  console.log(response.user_id);
+  location.replace('../StudentPage/2_SPage1.html')
+  alert('success');
 })
+}
+
+const DeepSeaNext = () => {
+  var register_id = $('#registerUser').val();
+  var email_name = localStorage.getItem('email')
+  var age_id = localStorage.getItem('age');
+  var gender_id = localStorage.getItem('gender');
+  var status_id = localStorage.getItem('status');
+  var degree_id = localStorage.getItem('degree');
+  var field_study_name1 = localStorage.getItem('fos');
+  var field_study_name2 = localStorage.getItem('fosvoc');
+  var field_study_name3 = localStorage.getItem('faculty');
+  var province_id = localStorage.getItem('province');
+
+  var field_study_name = field_study_name1 || field_study_name2 || field_study_name3
+
+  let data = {
+    register_id:register_id,
+    email_name: email_name,
+    age_id: age_id,
+    gender_id: gender_id,
+    status_id: status_id,
+    degree_id: degree_id,
+    field_study_name: field_study_name,
+    province_id: province_id,
+  }
+  
+  $.ajax({
+    url: apiUrl + 'register_user',
+    method: 'POST',
+    dataType: 'json', //datatype ที่ส่งมาเป็นรูปแบบ json
+    data: data
+}).always(function (response) {
+  console.log(response);
+  localStorage.setItem('user_id',response.user_id);
+  console.log(response.user_id);
+  location.replace("../VisitorPage/2_Page1.html")
+  alert('success');
+})
+}
+
+const ModelPageNext = () => {
+var user_id = localStorage.getItem('user_id')
 $.ajax({
-  url: 'http://localhost:5000/result_max/8',
+  url: apiUrl + 'result_max/' + user_id,
   method: 'GET',
   dataType: 'json'
 }).done(function (response) {
@@ -447,16 +491,16 @@ $.ajax({
   // Redirect based on program_id value
   switch (program_id) {
     case 1:
-      location.replace("../ModelPage/2_1ModelPageAi.html");
-      break;
-    case 2:
-      location.replace("../ModelPage/3_2ModelPageElec.html");
-      break;
-    case 3:
       location.replace("../ModelPage/4_3ModelPageCom.html");
       break;
-    case 4:
+    case 2:
       location.replace("../ModelPage/5_4ModelPageMulti.html");
+      break;
+    case 3:
+      location.replace("../ModelPage/3_2ModelPageElec.html");
+      break;
+    case 4:
+      location.replace("../ModelPage/2_1ModelPageAi.html");
       break;
     default:
       console.error('Unexpected program_id value:', program_id);

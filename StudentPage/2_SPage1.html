@@ -55,9 +55,12 @@
        </section>
 </body>
 <script>
-     $(document).ready(function() {
+    $(document).ready(function() {
+    var selectedIds = []; // Array to keep track of selected options in order
+
+    // Fetch data and create checkboxes
     $.ajax({
-        url: 'http://localhost:5000/qa_answers',  // Your server-side script URL
+        url: apiUrl + 'qa_answers',  // Your server-side script URL
         type: 'GET',
         dataType: 'json',
         success: function(data) {
@@ -71,8 +74,7 @@
 
             // Create checkboxes based on filtered data
             $.each(filteredData, function(index, item) {
-                // Assign a unique class based on ans_id
-                var uniqueClass = 'option-' + item.ans_id; // Example: option-1, option-2, etc.
+                var uniqueClass = 'option-' + item.ans_id;
                 var checkbox = $('<input>', {
                     type: 'checkbox',
                     id: 'checkbox' + item.ans_id,
@@ -87,38 +89,48 @@
 
                 var label = $('<label>', {
                     for: 'checkbox' + item.ans_id
-                }).append(checkbox).append(span); // Wrap checkbox and span inside label
+                }).append(checkbox).append(span);
                 
-                    container.append(checkbox).append(label).append('<br>');
-                });
-                
-                $('input[type="checkbox"]').change(function() {
-                var selectedCount = $('input[type="checkbox"]:checked').length;
-                if (selectedCount > 3) {
-                    $(this).prop('checked', false); // Uncheck the last clicked checkbox
-                    alert('You can select up to 3 options only.');
-                }
-            });
-        },
-            error: function(xhr, status, error) {
-                console.error('Error fetching data:', status, error);
-            }
-        });
-        $('#submit').click(function() {
-            var selectedIds = [];
-            $('#checkbox-container input[type=checkbox]:checked').each(function() {
-                selectedIds.push($(this).val()); // Collect selected checkbox values
+                container.append(checkbox).append(label).append('<br>');
             });
 
-            // Check if exactly 3 options are selected
-            if (selectedIds.length === 3) {
-                console.log('Selected checkbox IDs:', selectedIds);
-                // Store selected IDs in localStorage or perform other actions
-                location.replace('../StudentPage/3_SPage2.html')
-            } else {
-                alert('Please select exactly 3 options.');
-            }
-        });
+            // Handle checkbox selection
+            $('input[type="checkbox"]').change(function() {
+                var value = $(this).val();
+
+                if ($(this).is(':checked')) {
+                    if (selectedIds.length < 3) {
+                        selectedIds.push(value); // Add the selected value in order
+                    } else {
+                        $(this).prop('checked', false); // Uncheck the last clicked checkbox
+                        alert('You can select up to 3 options only.');
+                    }
+                } else {
+                    // Remove the unchecked value from the array
+                    selectedIds = selectedIds.filter(function(id) {
+                        return id !== value;
+                    });
+                }
+
+                console.log('Selected checkbox IDs in order:', selectedIds);
+            });
+        },
+        error: function(xhr, status, error) {
+            console.error('Error fetching data:', status, error);
+        }
     });
+
+    // Handle the submit button click
+    $('#submit').click(function() {
+        if (selectedIds.length === 3) {
+            console.log('Selected checkbox IDs:', selectedIds);
+            // Store selected IDs in localStorage or perform other actions
+            location.replace('../StudentPage/3_SPage2.html');
+        } else {
+            alert('Please select exactly 3 options.');
+        }
+    });
+});
+
 </script>
 </html>
